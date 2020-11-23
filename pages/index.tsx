@@ -6,10 +6,10 @@ const Index: React.FC = () => {
   const [play, { stop, isPlaying }] = useSound('/assets/pronounce_pish.mp3');
 
   return (
-    <main>
-      <header className="grid grid-cols-12 h-screen">
-        <div className="p-10 flex flex-col justify-center relative h-full pl-16 col-span-7">
-          <nav className="absolute top-0 py-10 flex items-center justify-between text-gray-900 dark:text-gray-100">
+    <main className="dark">
+      <header className="grid grid-cols-12 h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="pt-32 pb-20 sm:py-36 lg:p-10 flex flex-col justify-center relative h-full pl-16 col-span-12 md:col-span-7">
+          <nav className="absolute top-0 py-10 flex items-center justify-between text-gray-700 dark:text-gray-100">
             <ul className="flex items-center space-x-8">
               <li className="inline-flex items-center font-serif font-semibold">
                 <svg
@@ -61,61 +61,60 @@ const Index: React.FC = () => {
           </nav>
           <div className="space-y-5">
             <div className="flex items-center font-serif whitespace-nowrap text-black dark:text-white">
-              <h1 className="font-bold text-6xl">Pish News</h1>
-              <h2 className="font-semibold text-3xl ml-3 text-gray-700 dark:text-gray-300 -mb-0.5">
+              <h1 className="font-bold text-5xl md:text-6xl">Pish News</h1>
+              <h2 className="font-semibold text-xl md:text-3xl ml-3 text-coolGray-700 dark:text-coolGray-300 -mb-1">
                 /piSH/
               </h2>
               <button
-                className="ml-4 focus:outline-none"
+                className="ml-4 focus:outline-none -mb-1"
                 onClick={isPlaying ? () => stop() : () => play()}
               >
                 {isPlaying ? (
                   <svg
-                    className="w-9 h-9 text-gray-200"
+                    className="w-6 h-6 md:w-9 md:h-9 text-red-600 dark:text-gray-200"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      fill-rule="evenodd"
+                      fillRule="evenodd"
+                      clipRule="evenodd"
                       d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM12.293 7.293a1 1 0 011.414 0L15 8.586l1.293-1.293a1 1 0 111.414 1.414L16.414 10l1.293 1.293a1 1 0 01-1.414 1.414L15 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L13.586 10l-1.293-1.293a1 1 0 010-1.414z"
-                      clip-rule="evenodd"
                     ></path>
                   </svg>
                 ) : (
                   <svg
-                    className="w-9 h-9 text-gray-200"
+                    className="w-6 h-6 md:w-9 md:h-9 text-red-600 dark:text-gray-200"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      fill-rule="evenodd"
+                      fillRule="evenodd"
+                      clipRule="evenodd"
                       d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"
-                      clip-rule="evenodd"
                     ></path>
                   </svg>
                 )}
               </button>
             </div>
-            <p className="text-lg text-gray-800 dark:text-gray-200 leading-relaxed">
-              <span className="text-gray-600 dark:text-gray-400">
+            <p className="text-lg text-gray-600 dark:text-gray-300 leading-8">
+              <span className="transition ease duration-300 font-semibold hover:text-red-600 dark:hover:text-red-500 text-gray-800 dark:text-gray-400">
                 Exclamation.
               </span>{' '}
               used to express annoyance, <br className="hidden md:block" />{' '}
               impatience, or disgust.
             </p>
-            <div className="pt-3">
+            <div className="md:pt-2">
               <Button size="md">Dive in</Button>
             </div>
           </div>
         </div>
-        <div className="col-span-5">
+        <div className="col-span-12 lg:col-span-5 w-screen overflow-x-hidden">
           <img
             src="/assets/circular-city.jpg"
             alt="Photo by sergio souza on Unsplash"
-            className="h-screen inline-block object-cover"
-            style={{ clipPath: 'polygon(100% 0, 100% 100%, 10% 100%, 0 0)' }}
+            className="clip-image w-screen h-72 sm:h-96 lg:w-auto lg:h-screen inline-block object-cover"
           />
         </div>
       </header>
