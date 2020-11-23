@@ -19,7 +19,7 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const button = (
     <button
-      className={`font-serif font-medium focus:outline-none focus:border focus:border-red-200 bg-red-600 focus:bg-red-700 text-red-50 ${
+      className={`transition ease duration-200 focus:ring-2 ring-red-500 font-serif font-medium focus:outline-none focus:border focus:border-red-200 bg-red-600 focus:bg-red-700 text-red-50 ${
         ButtonStyles[size.toString()]
       }`}
     >
