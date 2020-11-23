@@ -22,6 +22,12 @@ module.exports = {
       translate: {
         '-1/10': '-10%',
       },
+      borderWidth: {
+        6: '6px',
+      },
+      maxHeight: {
+        '4xl': '1024px',
+      },
     },
   },
   variants: {
