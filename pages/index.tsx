@@ -1,69 +1,12 @@
 import React, { useEffect } from 'react';
-import Link from 'next/link';
 import useSound from 'use-sound';
 import { GetStaticProps } from 'next';
-import { Button } from '../components/button';
+import { Button } from '../components/Button';
 import { client } from '../utils/prismic-connection';
 import ApiSearchResponse from 'prismic-javascript/types/ApiSearchResponse';
 import Prismic from 'prismic-javascript';
 import { Navbar } from '../components/Navbar';
-
-const Card: React.FC<{ index: number; result: any }> = ({ index, result }) => {
-  if (index) {
-    return (
-      <Link href={`/article/${result.uid}`}>
-        <a className="col-span-12 lg:col-span-5 row-span-1 mt-8 lg:mt-0">
-          <div className="flex flex-col sm:flex-row">
-            <img
-              src="https://patch.com/img/cdn20/ap/24438295/20201122/011913/styles/patch_image/public/ap-20327302438866___22130626350.jpg"
-              alt="Curfew protests (Image credits: patch.com)"
-              className="w-full h-48 sm:w-40 sm:h-24 object-cover rounded"
-            />
-            <div className="sm:ml-5 mt-5 sm:mt-0">
-              <h3 className="font-serif text-lg lg:text-base font-bold text-gray-800 whitespace-pre-wrap">
-                Protestors gather to defy Gov. Newsom's 10 p.m. curfew
-              </h3>
-              <p className="text-red-500 font-medium mt-2 text-sm">
-                By Hanzel Grimes
-                <span className="text-gray-400 font-normal ml-2">
-                  &middot;&nbsp; 7 mins read
-                </span>
-              </p>
-            </div>
-          </div>
-        </a>
-      </Link>
-    );
-  }
-
-  return (
-    <Link href={`/article/${result.uid}`}>
-      <a className="col-span-12 lg:col-span-7 row-span-3 cursor-pointer">
-        <img
-          src={result.data.image.url}
-          alt="Gavin Newsom speaking"
-          className="mb-7 rounded-md max-w-3xl w-full object-cover shadow-inner"
-          style={{ maxHeight: '23.5rem' }}
-        />
-        <h3 className="font-serif text-lg sm:text-xl md:text-2xl font-bold text-gray-800 whitespace-pre-wrap">
-          {result.data.title[0].text}
-          {/* Gavin Newsom battles Coronavirus as 94% of California's counties reach
-        purple tier status */}
-        </h3>
-        <p className="text-red-500 font-medium mt-2 sm:mt-3 text-sm sm:text-base">
-          By{' '}
-          {result.data.author.slug
-            .split('-')
-            .map((str: string) => str.slice(0, 1).toUpperCase() + str.slice(1))
-            .join(' ')}
-          <span className="text-gray-400 font-normal ml-2">
-            &middot;&nbsp; 7 mins read
-          </span>
-        </p>
-      </a>
-    </Link>
-  );
-};
+import { Card } from '../components/Card';
 
 const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
   const [play, { stop, isPlaying }] = useSound('/assets/pronounce_pish.mp3');
@@ -138,7 +81,7 @@ const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
               <div className="hidden sm:flex items-center justify-center">
                 <a
                   href="#main"
-                  className="absolute bottom-0 pb-12 transform hover:translate-y-1.5 transition ease duration-400"
+                  className="flex items-center justify-center absolute bottom-0 mb-12 p-1 transform hover:translate-y-1.5 transition ease duration-400"
                 >
                   <svg
                     className="w-4 h-4 text-gray-300"
