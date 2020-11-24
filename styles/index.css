@@ -8,6 +8,18 @@
   }
 }
 
+@media (max-width: 640px) {
+  .header-max-height {
+    max-height: 580px;
+  }
+}
+
+@media (max-height: 700px) {
+  .header-max-height {
+    max-height: 680px;
+  }
+}
+
 /* Start purging... */
 @tailwind utilities;
 /* Stop purging. */

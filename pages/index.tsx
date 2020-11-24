@@ -1,105 +1,86 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import Link from 'next/link';
 import useSound from 'use-sound';
+import { GetStaticProps } from 'next';
 import { Button } from '../components/button';
+import { client } from '../utils/prismic-connection';
+import ApiSearchResponse from 'prismic-javascript/types/ApiSearchResponse';
+import Prismic from 'prismic-javascript';
+import { Navbar } from '../components/Navbar';
 
-const Navbar: React.FC = () => (
-  <nav className="absolute top-0 py-8 lg:py-10 flex items-center justify-between w-full px-5 sm:px-6 md:px-10 lg:pl-0 text-gray-700 dark:text-gray-100">
-    <ul className="flex items-center space-x-10">
-      <li className="inline-flex items-center font-sans font-medium">
-        <svg
-          className="w-5 h-5 mr-2"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fillRule="evenodd"
-            d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z"
-            clipRule="evenodd"
-          />
-          <path d="M15 7h1a2 2 0 012 2v5.5a1.5 1.5 0 01-3 0V7z" />
-        </svg>
-        Content
-      </li>
-      <li className="inline-flex items-center font-sans font-medium">
-        <svg
-          className="w-5 h-5 mr-2"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fillRule="evenodd"
-            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
-            clipRule="evenodd"
-          />
-        </svg>
-        About
-      </li>
-      <li className="inline-flex items-center font-sans font-medium">
-        <svg
-          className="w-5 h-5 mr-2"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fillRule="evenodd"
-            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-            clipRule="evenodd"
-          />
-        </svg>
-        Search
-      </li>
-    </ul>
-    <ul className="hidden sm:flex items-center space-x-6 ml-auto">
-      <li>
-        <button>
-          <svg
-            className="w-6 h-6"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fillRule="evenodd"
-              d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.724 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z"
-              clipRule="evenodd"
+const Card: React.FC<{ index: number; result: any }> = ({ index, result }) => {
+  if (index) {
+    return (
+      <Link href={`/article/${result.uid}`}>
+        <a className="col-span-12 lg:col-span-5 row-span-1 mt-8 lg:mt-0">
+          <div className="flex flex-col sm:flex-row">
+            <img
+              src="https://patch.com/img/cdn20/ap/24438295/20201122/011913/styles/patch_image/public/ap-20327302438866___22130626350.jpg"
+              alt="Curfew protests (Image credits: patch.com)"
+              className="w-full h-48 sm:w-40 sm:h-24 object-cover rounded"
             />
-          </svg>
-        </button>
-      </li>
-      <li>
-        <button>
-          <svg
-            className="w-6 h-6"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M5 3a1 1 0 000 2c5.523 0 10 4.477 10 10a1 1 0 102 0C17 8.373 11.627 3 5 3z" />
-            <path d="M4 9a1 1 0 011-1 7 7 0 017 7 1 1 0 11-2 0 5 5 0 00-5-5 1 1 0 01-1-1zM3 15a2 2 0 114 0 2 2 0 01-4 0z" />
-          </svg>
-        </button>
-      </li>
-    </ul>
-  </nav>
-);
+            <div className="sm:ml-5 mt-5 sm:mt-0">
+              <h3 className="font-serif text-lg lg:text-base font-bold text-gray-800 whitespace-pre-wrap">
+                Protestors gather to defy Gov. Newsom's 10 p.m. curfew
+              </h3>
+              <p className="text-red-500 font-medium mt-2 text-sm">
+                By Hanzel Grimes
+                <span className="text-gray-400 font-normal ml-2">
+                  &middot;&nbsp; 7 mins read
+                </span>
+              </p>
+            </div>
+          </div>
+        </a>
+      </Link>
+    );
+  }
 
-const Index: React.FC = () => {
+  return (
+    <Link href={`/article/${result.uid}`}>
+      <a className="col-span-12 lg:col-span-7 row-span-3 cursor-pointer">
+        <img
+          src={result.data.image.url}
+          alt="Gavin Newsom speaking"
+          className="mb-7 rounded-md max-w-3xl w-full object-cover shadow-inner"
+          style={{ maxHeight: '23.5rem' }}
+        />
+        <h3 className="font-serif text-lg sm:text-xl md:text-2xl font-bold text-gray-800 whitespace-pre-wrap">
+          {result.data.title[0].text}
+          {/* Gavin Newsom battles Coronavirus as 94% of California's counties reach
+        purple tier status */}
+        </h3>
+        <p className="text-red-500 font-medium mt-2 sm:mt-3 text-sm sm:text-base">
+          By{' '}
+          {result.data.author.slug
+            .split('-')
+            .map((str: string) => str.slice(0, 1).toUpperCase() + str.slice(1))
+            .join(' ')}
+          <span className="text-gray-400 font-normal ml-2">
+            &middot;&nbsp; 7 mins read
+          </span>
+        </p>
+      </a>
+    </Link>
+  );
+};
+
+const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
   const [play, { stop, isPlaying }] = useSound('/assets/pronounce_pish.mp3');
+
+  useEffect(() => console.log(articles), []);
 
   return (
     <div>
-      <div className="bg-gray-50 dark:bg-gray-900">
+      <div className="bg-gray-50 dark:bg-gray-900 overflow-y-hidden md:header-max-height">
         <header
-          className="grid grid-wrap grid-cols-12 h-screen max-h-4xl w-screen mx-auto"
+          className="grid grid-wrap grid-cols-12 py-20 sm:py-0 md:h-screen md:max-h-4xl w-screen mx-auto"
           style={{ maxWidth: '1880px' }}
         >
-          <div className="block lg:hidden">
+          <div className="hidden sm:block lg:hidden">
             <Navbar />
           </div>
-          <div className="max-w-5xl w-full mx-auto -mt-16 sm:mt-0 pb-0 sm:py-36 lg:p-10 flex flex-col justify-center relative h-full pl-5 sm:pl-8 md:pl-16 col-span-12 lg:col-span-7">
+          <div className="max-w-5xl w-full mx-auto pb-0 sm:py-36 lg:p-10 flex flex-col justify-center relative h-full px-7 sm:pl-8 md:pl-16 col-span-12 lg:col-span-7">
             <div className="hidden lg:block">
               <Navbar />
             </div>
@@ -154,7 +135,7 @@ const Index: React.FC = () => {
                   Dive in
                 </Button>
               </div>
-              <div className="flex items-center justify-center">
+              <div className="hidden sm:flex items-center justify-center">
                 <a
                   href="#main"
                   className="absolute bottom-0 pb-12 transform hover:translate-y-1.5 transition ease duration-400"
@@ -176,102 +157,79 @@ const Index: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="relative col-span-12 lg:col-span-5">
+          <div className="hidden md:block relative col-span-12 lg:col-span-5">
             <img
               src="/assets/circular-city.jpg"
               alt="Photo by sergio souza on Unsplash"
               className="clip-image w-screen h-72 sm:h-96 lg:w-auto lg:max-h-4xl lg:h-screen inline-block object-cover"
             />
-            <div className="absolute bottom-0 right-0 mb-3 mr-3 px-4 py-1 rounded shadow-xl bg-white bg-opacity-50 text-gray-800 font-medium">
+            <div className="absolute bottom-0 right-0 mb-4 mr-4 px-4 py-1 rounded shadow-xl bg-white bg-opacity-50 text-gray-800 font-medium">
               Image by <span className="text-red-600">Sergio Souza</span>
             </div>
           </div>
         </header>
       </div>
       <main
-        className="grid grid-cols-12 gap-6 bg-white max-w-6xl mx-auto py-28"
+        className="grid grid-cols-12 gap-6 bg-white max-w-3xl lg:max-w-6xl mx-auto py-5 md:py-16 lg:py-28 px-5 sm:px-8"
         id="main"
       >
-        <div className="col-span-7 row-span-3 cursor-pointer">
-          <img
-            src="https://kmph.com/resources/media/a8e0ecf8-6ec5-4d3a-8a3f-f9e76841b319-large16x9_AP20078044522655.jpg?1605824510042"
-            alt="Gavin Newsom speaking"
-            className="mb-7 rounded-md"
-          />
-          <h3 className="font-serif text-2xl font-bold text-gray-800 whitespace-pre-wrap">
-            Gavin Newsom battles Coronavirus as 94% of California's counties
-            reach purple tier status
-          </h3>
-          <p className="text-red-500 font-medium mt-3 text-base">
-            By Hanzel Grimes
-            <span className="text-gray-400 font-normal ml-2">
-              &middot;&nbsp; 7 mins read
-            </span>
-          </p>
-        </div>
-        <div className="col-span-5 row-span-1">
-          <div className="flex">
-            <img
-              src="https://patch.com/img/cdn20/ap/24438295/20201122/011913/styles/patch_image/public/ap-20327302438866___22130626350.jpg"
-              alt="Curfew protests (Image credits: patch.com)"
-              className="w-48 h-28 object-cover rounded"
+        <div className="flex items-center mb-1 transform hover:-translate-y-1 transition ease duration-200 col-span-12 bg-red-50 text-red-500 font-medium px-4 py-3 rounded-md">
+          <svg
+            className="w-5 h-5 mr-2 text-red-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             />
-            <div className="ml-5">
-              <h3 className="font-serif text-base font-bold text-gray-800 whitespace-pre-wrap">
-                Protestors gather to defy Gov. Newsom's 10 p.m. curfew
-              </h3>
-              <p className="text-red-500 font-medium mt-2 text-sm">
-                By Hanzel Grimes
-                <span className="text-gray-400 font-normal ml-2">
-                  &middot;&nbsp; 7 mins read
-                </span>
-              </p>
-            </div>
-          </div>
-          <div className="col-span-5 row-span-1 mt-5">
-            <div className="flex">
-              <img
-                src="https://patch.com/img/cdn20/ap/24438295/20201122/011913/styles/patch_image/public/ap-20327302438866___22130626350.jpg"
-                alt="Curfew protests (Image credits: patch.com)"
-                className="w-48 h-28 object-cover rounded"
+          </svg>
+          <span className="text-red-600 font-semibold mr-1">Note:</span> We have
+          just launched and some links and pages still be under development.
+          <a
+            href="#"
+            className="flex items-center ml-auto text-red-600 font-semibold"
+          >
+            Details
+            <svg
+              className="w-3.5 h-3.5 ml-1.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
               />
-              <div className="ml-5">
-                <h3 className="font-serif text-base font-bold text-gray-800 whitespace-pre-wrap">
-                  Protestors gather to defy Gov. Newsom's 10 p.m. curfew
-                </h3>
-                <p className="text-red-500 font-medium mt-2 text-sm">
-                  By Hanzel Grimes
-                  <span className="text-gray-400 font-normal ml-2">
-                    &middot;&nbsp; 7 mins read
-                  </span>
-                </p>
-              </div>
-            </div>
-            <div className="col-span-5 row-span-1 mt-5">
-              <div className="flex">
-                <img
-                  src="https://patch.com/img/cdn20/ap/24438295/20201122/011913/styles/patch_image/public/ap-20327302438866___22130626350.jpg"
-                  alt="Curfew protests (Image credits: patch.com)"
-                  className="w-48 h-28 object-cover rounded"
-                />
-                <div className="ml-5">
-                  <h3 className="font-serif text-base font-bold text-gray-800 whitespace-pre-wrap">
-                    Protestors gather to defy Gov. Newsom's 10 p.m. curfew
-                  </h3>
-                  <p className="text-red-500 font-medium mt-2 text-sm">
-                    By Hanzel Grimes
-                    <span className="text-gray-400 font-normal ml-2">
-                      &middot;&nbsp; 7 mins read
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+            </svg>
+          </a>
         </div>
+        {articles.results.map((result, index) => (
+          <Card key={result.id} index={index} result={result} />
+        ))}
       </main>
     </div>
   );
+};
+
+export const getStaticProps: GetStaticProps = async () => {
+  const articles = await client.query(
+    Prismic.Predicates.at('document.type', 'article'),
+    { orderings: '[my.article.date desc]' }
+  );
+
+  return {
+    props: {
+      articles,
+    },
+  };
 };
 
 export default Index;

@@ -1,8 +1,9 @@
 import React from 'react';
 import Head from 'next/head';
+import { AppProps } from 'next/app';
 import '../styles/index.css';
 
-function MyApp({ Component, pageProps }: any) {
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
