@@ -189,7 +189,7 @@ const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
             />
           </svg>
           <span className="text-red-600 font-semibold mr-1">Note:</span> We have
-          just launched and some links and pages still be under development.
+          just launched and some links and pages are still under development.
           <a
             href="#"
             className="flex items-center ml-auto text-red-600 font-semibold"
