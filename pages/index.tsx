@@ -154,7 +154,7 @@ const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
             </svg>
           </a>
         </div>
-        {articles.results.map((result, index) => (
+        {articles.results.slice(0, 4).map((result, index) => (
           <Card key={result.id} index={index} result={result} />
         ))}
       </main>
