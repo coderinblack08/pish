@@ -17,7 +17,7 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
     <div>
       <Navbar />
       <main className="px-5">
-        <h2 className="pt-32 max-w-2xl mx-auto font-serif font-black text-xl sm:text-2xl md:text-3xl text-center">
+        <h2 className="pt-12 max-w-2xl mx-auto font-serif font-black text-xl sm:text-2xl md:text-3xl text-center">
           {article.title[0].text}
         </h2>
         <div className="flex items-center justify-center space-x-2 text-gray-600 mt-3 text-sm sm:text-base">
@@ -26,18 +26,24 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
           <p>{article.date}</p>
         </div>
         <div className="prose lg:prose-xl mx-auto mt-10">
-          <div data-tip={article.image.alt}>
+          <div data-tip={article.image.alt} data-for="image-tooltip">
             <img
               src={article.image.url}
               alt={article.image.alt}
               className="object-cover max-w-2xl w-full h-96 mx-auto rounded-md"
             />
           </div>
-          <ReactTooltip place="top" type="dark" effect="float" />
+          <ReactTooltip
+            place="top"
+            type="dark"
+            className="bg-gray-900 bg-opacity-90 text-white"
+            effect="float"
+            id="image-tooltip"
+          />
           <p className="leading-loose text-black pb-3">
             {RichText.render(article.body)}
           </p>
-          <p className="flex items-center">
+          <div className="flex items-center pb-6">
             <svg
               className="w-4 h-4 mr-1"
               fill="none"
@@ -55,7 +61,7 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
             <span className="text-gray-800 text-lg">
               Tags: {tags.join(', ')}
             </span>
-          </p>
+          </div>
           <div className="flex items-center space-x-2 pb-10">
             <button className="inline-flex items-center justify-center w-11 h-11 bg-blue-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 hover:bg-blue-500 transition ease duration-200">
               <svg

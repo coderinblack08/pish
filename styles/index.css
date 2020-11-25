@@ -20,6 +20,10 @@
   }
 }
 
+.firebase-emulator-warning {
+  display: none;
+}
+
 /* Start purging... */
 @tailwind utilities;
 /* Stop purging. */

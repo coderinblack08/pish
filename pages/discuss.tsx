@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../components/Button';
 import { Navbar } from '../components/Navbar';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -9,6 +9,13 @@ import ReactTooltip from 'react-tooltip';
 const Discuss: React.FC = () => {
   const auth = firebase.auth();
   const firestore = firebase.firestore();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 300);
+  }, []);
 
   const chatRef = firestore.collection('chats');
   const chatQuery = chatRef.orderBy('official').limit(25);
@@ -19,8 +26,31 @@ const Discuss: React.FC = () => {
   return (
     <div className="text-gray-50 bg-gray-800 min-h-screen">
       <Navbar />
-      {user ? (
-        <div className="container mx-auto py-28 lg:py-32 px-5">
+      {loading ? (
+        <div className="flex items-center justify-center h-screen">
+          <svg
+            className="animate-spin -ml-1 mr-3 h-8 w-8 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+        </div>
+      ) : user ? (
+        <div className="container mx-auto pt-10 px-5">
           <div className="flex justify-between">
             <div>
               <h1
@@ -29,7 +59,7 @@ const Discuss: React.FC = () => {
               >
                 Live chats
               </h1>
-              <ReactTooltip place="bottom" type="dark" effect="float" />
+              <ReactTooltip place="bottom" type="dark" effect="solid" />
             </div>
             <div className="space-x-2">
               <Button href="/create" sans>
@@ -84,7 +114,7 @@ const Discuss: React.FC = () => {
                   {chat.description}
                 </p>
                 <div className="mt-5">
-                  <Button>
+                  <Button href={`/chatroom/${chat.id}`}>
                     <div className="px-4">Join</div>
                   </Button>
                 </div>

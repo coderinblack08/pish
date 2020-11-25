@@ -17,6 +17,7 @@
     "react-dom": "^16.13.1",
     "react-firebase-hooks": "^2.2.0",
     "react-tooltip": "^4.2.11",
+    "reactfire": "^2.0.3",
     "use-sound": "^2.0.0"
   },
   "devDependencies": {
