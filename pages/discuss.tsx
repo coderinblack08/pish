@@ -1,27 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { Button } from '../components/Button';
-import { Navbar } from '../components/Navbar';
+import firebase from 'firebase';
+import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionDataOnce } from 'react-firebase-hooks/firestore';
-import firebase from 'firebase';
 import ReactTooltip from 'react-tooltip';
+import { Button } from '../components/Button';
+import { Navbar } from '../components/Navbar';
 
 const Discuss: React.FC = () => {
   const auth = firebase.auth();
   const firestore = firebase.firestore();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 300);
-  }, []);
 
   const chatRef = firestore.collection('chats');
-  const chatQuery = chatRef.orderBy('official').limit(25);
+  const chatQuery = chatRef.orderBy('official', 'desc').limit(25);
 
   const [user] = useAuthState(auth);
-  const [chats] = useCollectionDataOnce(chatQuery, { idField: 'id' });
+  const [chats, loading] = useCollectionDataOnce(chatQuery, { idField: 'id' });
 
   return (
     <div className="text-gray-50 bg-gray-800 min-h-screen">
@@ -80,10 +73,10 @@ const Discuss: React.FC = () => {
             </div>
           </div>
           <br />
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-wrap items-start">
             {chats?.map((chat: any) => (
               <div
-                className="rounded-md bg-gray-700 border border-gray-600 p-5 max-w-sm w-full"
+                className="rounded-md bg-gray-700 border border-gray-600 p-5 max-w-sm w-full mr-4 mb-4"
                 key={chat.id}
               >
                 <h2 className="text-xl font-bold flex items-center">
@@ -138,9 +131,14 @@ const Discuss: React.FC = () => {
           </p>
           <div className="pt-3">
             <Button
-              onClick={() => {
+              onClick={async () => {
                 const provider = new firebase.auth.GoogleAuthProvider();
-                auth.signInWithPopup(provider);
+                const task = await auth.signInWithPopup(provider);
+                if (task.additionalUserInfo?.isNewUser) {
+                  firestore.collection('users').doc(task.user?.uid).set({
+                    chats: [],
+                  });
+                }
               }}
               sans
             >

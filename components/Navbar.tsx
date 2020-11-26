@@ -8,7 +8,7 @@ export const Navbar: React.FC = () => {
 
   return (
     <nav
-      className={`bg-gray-900 py-5 lg:py-6 w-full px-5 sm:px-6 md:px-10 text-gray-700 dark:text-gray-100 ${
+      className={`relative z-50 bg-gray-900 py-5 lg:py-6 w-full px-5 sm:px-6 md:px-10 text-gray-700 dark:text-gray-100 ${
         pathname === '/' ? 'lg:pl-0' : ''
       }`}
     >

@@ -19,6 +19,7 @@ export const Button: React.FC<ButtonProps> = ({
   sans = false,
   children,
   href,
+  disabled,
   size = 'sm',
   ...props
 }) => {
@@ -28,7 +29,12 @@ export const Button: React.FC<ButtonProps> = ({
         sans ? 'font-sans font-bold' : 'font-serif font-medium'
       } focus:outline-none focus:border focus:border-${colorTheme}-200 bg-${colorTheme}-600 focus:bg-${colorTheme}-700 text-${colorTheme}-50 ${
         ButtonStyles[size.toString()]
+      } ${
+        disabled
+          ? `cursor-not-allowed bg-${colorTheme}-800 text-${colorTheme}-200`
+          : `focus:border focus:border-${colorTheme}-200 bg-${colorTheme}-600 focus:bg-${colorTheme}-700 text-${colorTheme}-50`
       }`}
+      disabled={disabled}
       {...props}
     >
       {children}

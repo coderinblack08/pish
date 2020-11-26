@@ -4,10 +4,11 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useDocumentDataOnce } from 'react-firebase-hooks/firestore';
+import { useDocumentData } from 'react-firebase-hooks/firestore';
 import ReactTooltip from 'react-tooltip';
 import { Waypoint } from 'react-waypoint';
 import { Button } from '../../components/Button';
+import { SettingsModal } from '../../components/Modal';
 import { Navbar } from '../../components/Navbar';
 
 const Chatroom: NextPage<{ id: string }> = ({ id }) => {
@@ -21,7 +22,7 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
   const messagesRef = firestore.collection('messages');
   const chatRef = firestore.collection('chats').doc(id);
 
-  const [chat]: any[] = useDocumentDataOnce(chatRef, { idField: 'id' });
+  const [chat]: any[] = useDocumentData(chatRef, { idField: 'id' });
 
   useEffect(() => {
     const filter = new Filter();
@@ -40,9 +41,9 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
             return data;
           }) as any
         );
-        // @ts-ignore
         querySnapshot.docChanges().forEach((change) => {
           if (change.type === 'added') {
+            // @ts-ignore
             stake.current.scrollIntoView({ behavior: 'smooth' });
           }
         });
@@ -71,7 +72,8 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
     }
   };
 
-  const isModerator = () => chat.moderators.includes(user.uid);
+  const isBanned = (uid: string = user?.uid) => chat?.banned?.includes(uid);
+  const isModerator = () => chat?.moderators.includes(user.uid);
   const isMe = (message: any) => message.uid === user.uid;
 
   return (
@@ -79,7 +81,7 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
       <div className="sticky top-0 w-full">
         <Navbar />
       </div>
-      <div className="sticky top-0 py-6 bg-gray-900">
+      <div className="sticky top-0 py-6 px-5 bg-gray-900">
         <div className="relative flex items-center container mx-auto w-full justify-center">
           <Link href="/discuss">
             <a className="flex items-center text-gray-300 hover:text-gray-400 transition duration-300 mr-auto">
@@ -98,9 +100,16 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
               <h1 className="text-lg font-medium">Leave Room</h1>
             </a>
           </Link>
-          <h1 className="absolute inset-x-auto text-lg font-bold">
-            {chat?.name}
-          </h1>
+          <div className="flex items-center absolute inset-x-auto">
+            <h1 className="text-lg font-bold">{chat?.name}</h1>
+          </div>
+          <div>
+            {isBanned() ? (
+              <p className="text-red-600 font-bold">You have been banned</p>
+            ) : (
+              <SettingsModal chat={chat} id={id} />
+            )}
+          </div>
         </div>
       </div>
       <div className="pt-10 px-5">
@@ -131,10 +140,17 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
                 {message.text}
               </p>
               {!isMe(message) && isModerator() ? (
-                <div className="mx-2">
+                <div className="mr-2 ml-4">
                   <button
                     className="mt-2 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-full"
                     data-tip="Ban user"
+                    onClick={() => {
+                      chatRef.update({
+                        banned: firebase.firestore.FieldValue.arrayUnion(
+                          message.uid
+                        ),
+                      });
+                    }}
                   >
                     <svg
                       className="w-6 h-6 text-red-600"
@@ -213,12 +229,15 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
             <input
               value={formValue}
               onChange={({ target: { value } }) => setFormValue(value)}
+              disabled={isBanned()}
               name="message"
               id="message"
               placeholder="Message"
-              className="w-full text-gray-200 bg-gray-700 px-5 pt-3 pb-8 rounded border border-gray-600 focus:outline-none focus:bg-gray-500 focus:bg-opacity-25 resize-none shadow-lg"
+              className={`w-full text-gray-200 bg-gray-700 px-5 pt-3 pb-8 rounded border border-gray-600 focus:outline-none focus:bg-gray-500 focus:bg-opacity-25 resize-none shadow-lg ${
+                isBanned() ? 'cursor-not-allowed' : ''
+              }`}
             />
-            <Button sans>
+            <Button disabled={isBanned()} sans>
               <div className="flex items-center">
                 Send
                 <svg

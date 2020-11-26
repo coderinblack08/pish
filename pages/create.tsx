@@ -1,7 +1,7 @@
 import firebase from 'firebase';
 import { Field, Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Button } from '../components/Button';
 import { Navbar } from '../components/Navbar';
@@ -10,6 +10,7 @@ const Create: React.FC = () => {
   const router = useRouter();
   const auth = firebase.auth();
   const firestore = firebase.firestore();
+  const [showError, setShowError] = useState(false);
 
   const chatRef = firestore.collection('chats');
   const [user] = useAuthState(auth);
@@ -27,7 +28,23 @@ const Create: React.FC = () => {
               official: false,
             };
 
-            await chatRef.add(payload);
+            const userDoc = firestore.collection('users').doc(user.id);
+
+            const userInfo = (await userDoc.get()).data();
+
+            if (userInfo?.chats.length < 1) {
+              const newChat = await chatRef.add(payload);
+
+              await firestore
+                .collection('users')
+                .doc(user.uid)
+                .update({
+                  chats: firebase.firestore.FieldValue.arrayUnion(newChat.id),
+                });
+            } else {
+              setShowError(true);
+            }
+
             router.push('/discuss');
           }}
         >
@@ -71,7 +88,12 @@ const Create: React.FC = () => {
                   </div>
                 )}
               </Field>
-              <div className="mt-6 space-x-2">
+              {showError ? (
+                <p className="text-red-500 font-bold my-4">
+                  * You may only create one chatroom
+                </p>
+              ) : null}
+              <div className="space-x-2">
                 <Button type="submit" sans>
                   Submit
                 </Button>
