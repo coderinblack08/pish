@@ -23,7 +23,7 @@ export const Card: React.FC<{ index: number; result: any }> = ({
               <p className="text-red-500 font-medium mt-2 text-sm">
                 By {slugToString(result.data.author.slug)}
                 <span className="text-gray-400 font-normal ml-2">
-                  &middot;&nbsp; 7 mins read
+                  &middot;&nbsp; {result.data.read_time} mins read
                 </span>
               </p>
             </div>
@@ -48,7 +48,7 @@ export const Card: React.FC<{ index: number; result: any }> = ({
         <p className="text-red-500 font-medium mt-2 sm:mt-3 text-sm sm:text-base">
           By {slugToString(result.data.author.slug)}
           <span className="text-gray-400 font-normal ml-2">
-            &middot;&nbsp; 7 mins read
+            &middot;&nbsp; {result.data.read_time} mins read
           </span>
         </p>
       </a>
