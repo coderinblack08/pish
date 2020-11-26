@@ -36,11 +36,16 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
             if (filter.isProfane(data.text)) {
               data.text = filter.clean(data.text);
             }
+            data.id = doc.id;
             return data;
           }) as any
         );
         // @ts-ignore
-        stake.current.scrollIntoView({ behavior: 'smooth' });
+        querySnapshot.docChanges().forEach((change) => {
+          if (change.type === 'added') {
+            stake.current.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
       });
 
     return () => {
@@ -199,7 +204,7 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
             }}
           />
           <form
-            className="flex items-start space-x-3 max-w-4xl mx-auto"
+            className="flex items-start space-x-3 max-w-4xl mx-auto px-5"
             onSubmit={(e) => {
               e.preventDefault();
               sendMessage();
