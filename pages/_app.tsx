@@ -7,7 +7,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Pish</title>
+        <title>🦃 Pish</title>
         <meta httpEquiv="X-UA-Compatible" content="edge" />
         <meta
           name="description"
