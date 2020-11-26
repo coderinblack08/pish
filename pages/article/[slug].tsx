@@ -37,11 +37,17 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
               className="object-cover max-w-2xl w-full h-96 mx-auto rounded-md"
             />
           </div>
-          <ReactTooltip place="top" type="dark" effect="float" />
+          <ReactTooltip
+            place="top"
+            type="dark"
+            className="bg-gray-900 bg-opacity-90 text-white"
+            effect="float"
+            id="image-tooltip"
+          />
           <p className="leading-loose text-black pb-3">
             {RichText.render(article.body)}
           </p>
-          <p className="flex items-center">
+          <div className="flex items-center pb-6">
             <svg
               className="w-4 h-4 mr-1"
               fill="none"
@@ -59,7 +65,7 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
             <span className="text-gray-800 text-lg">
               Tags: {tags.join(', ')}
             </span>
-          </p>
+          </div>
           <div className="flex items-center space-x-2 pb-10">
             <button className="inline-flex items-center justify-center w-11 h-11 bg-blue-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 hover:bg-blue-500 transition ease duration-200">
               <svg
