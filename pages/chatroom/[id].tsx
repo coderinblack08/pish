@@ -43,8 +43,7 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
         );
         querySnapshot.docChanges().forEach((change) => {
           if (change.type === 'added') {
-            // @ts-ignore
-            stake.current.scrollIntoView({ behavior: 'smooth' });
+            stake.current!.scrollIntoView({ behavior: 'smooth' });
           }
         });
       });

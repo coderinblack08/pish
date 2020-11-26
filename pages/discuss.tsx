@@ -74,9 +74,11 @@ const Discuss: React.FC = () => {
           </div>
           <br />
           <div className="flex flex-wrap items-start">
-            {chats?.map((chat: any) => (
+            {chats?.map((chat: any, index) => (
               <div
-                className="rounded-md bg-gray-700 border border-gray-600 p-5 max-w-sm w-full mr-4 mb-4"
+                className={`rounded-md bg-gray-700 ${
+                  index ? 'bg-opacity-50 border-opacity-25' : ''
+                } border border-gray-600 p-5 max-w-sm w-full mr-4 mb-4`}
                 key={chat.id}
               >
                 <h2 className="text-xl font-bold flex items-center">

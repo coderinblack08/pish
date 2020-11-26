@@ -22,17 +22,21 @@ const Create: React.FC = () => {
         <Formik
           initialValues={{ name: '', description: '' }}
           onSubmit={async (values) => {
+            if (values.name.trim().length == 0) {
+              return;
+            }
+
             const payload = {
               ...values,
               moderators: [user.uid],
               official: false,
             };
 
-            const userDoc = firestore.collection('users').doc(user.id);
+            const userDoc = firestore.collection('users').doc(user.uid);
 
-            const userInfo = (await userDoc.get()).data();
+            const userInfo = await userDoc.get();
 
-            if (userInfo?.chats.length < 1) {
+            if (userInfo.data()?.chats.length < 1) {
               const newChat = await chatRef.add(payload);
 
               await firestore
@@ -41,11 +45,11 @@ const Create: React.FC = () => {
                 .update({
                   chats: firebase.firestore.FieldValue.arrayUnion(newChat.id),
                 });
+
+              router.push('/discuss');
             } else {
               setShowError(true);
             }
-
-            router.push('/discuss');
           }}
         >
           {() => (
@@ -89,11 +93,11 @@ const Create: React.FC = () => {
                 )}
               </Field>
               {showError ? (
-                <p className="text-red-500 font-bold my-4">
+                <p className="text-red-500 font-bold mt-4">
                   * You may only create one chatroom
                 </p>
               ) : null}
-              <div className="space-x-2">
+              <div className="space-x-2 mt-4">
                 <Button type="submit" sans>
                   Submit
                 </Button>
