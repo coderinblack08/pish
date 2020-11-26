@@ -52,14 +52,19 @@ const Discuss: React.FC = () => {
       ) : user ? (
         <div className="container mx-auto pt-10 px-5">
           <div className="flex justify-between">
-            <div>
-              <h1
-                data-tip="Official and community driven"
-                className="flex items-center font-bold text-2xl"
-              >
-                Live chats
-              </h1>
-              <ReactTooltip place="bottom" type="dark" effect="solid" />
+            <div className="flex items-center space-x-3">
+              <div>
+                <h1
+                  data-tip="Official and community driven"
+                  className="flex items-center font-bold text-2xl"
+                >
+                  Live chats
+                </h1>
+                <ReactTooltip place="bottom" type="dark" effect="solid" />
+              </div>
+              <div className="rounded-full px-2.5 py-0.5 bg-red-600 text-sm font-bold font-mono">
+                BETA
+              </div>
             </div>
             <div className="space-x-2">
               <Button href="/create" sans>
@@ -114,7 +119,7 @@ const Discuss: React.FC = () => {
                   {chat.description}
                 </p>
                 <div className="mt-5">
-                  <Button href={`/chatroom/${chat.id}`}>
+                  <Button href={`/chatroom/${chat.id}`} sans>
                     <div className="px-4">Join</div>
                   </Button>
                 </div>

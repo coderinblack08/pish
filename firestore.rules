@@ -1,13 +1,36 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /chats/{chat} {
-      allow write, update: if request.auth.uid in resource.data.moderators;
+    match /chats/{chatId} {
+      allow create: if incomingData().official == false;
+      allow delete, update: if isModerator();
       allow read;
     }
-    match /messages/{chatId} {
-    	allow read, create: if request.auth != null;
-      allow update, delete: if resource.data.uid == request.auth.uid;
+
+    match /messages/{messageId} {
+      allow read: if isAuthenticated();
+      allow create: if incomingData().uid == request.auth.uid && hasIncomingText();
+      allow delete: if resource.data.uid == request.auth.uid;
+    }
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isModerator() {
+      return request.auth.uid in existingData().moderators;
+    }
+
+    function existingData() {
+      return resource.data;
+    }
+
+    function incomingData() {
+      return request.resource.data;
+    }
+
+    function hasIncomingText() {
+      return incomingData().text != null && incomingData().text.trim() != '';
     }
   }
 }
