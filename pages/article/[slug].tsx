@@ -24,6 +24,10 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
           <p className="text-red-600">By {article.author.name}</p>
           <Seperator />
           <p>{article.date}</p>
+          <Seperator />
+          <p>
+            {article.read_time} minute{article.read_time > 1 ? 's' : ''} read
+          </p>
         </div>
         <div className="prose lg:prose-xl mx-auto mt-10">
           <div data-tip={article.image.alt}>
