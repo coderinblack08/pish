@@ -7,6 +7,9 @@ module.exports = {
       './components/**/*.{js,ts,jsx,tsx}',
       './pages/**/*.{js,ts,jsx,tsx}',
     ],
+    options: {
+      safelist: [/border+?/, /bg+?/, /ring+?/, /text+?/],
+    },
   },
   darkMode: 'class', // 'media' || 'class'
   theme: {
