@@ -23,11 +23,11 @@ const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
           className="grid grid-wrap grid-cols-12 py-20 sm:py-0 md:h-screen md:max-h-4xl w-screen mx-auto"
           style={{ maxWidth: '1880px' }}
         >
-          <div className="hidden sm:block lg:hidden">
+          <div className="hidden sm:block lg:hidden absolute top-0 w-full">
             <Navbar />
           </div>
           <div className="max-w-5xl w-full mx-auto pb-0 sm:py-36 lg:p-10 flex flex-col justify-center relative h-full px-7 sm:pl-8 md:pl-16 col-span-12 lg:col-span-7">
-            <div className="hidden lg:block">
+            <div className="absolute top-0 hidden lg:block w-full">
               <Navbar />
             </div>
             <div className="space-y-3 sm:space-y-5">

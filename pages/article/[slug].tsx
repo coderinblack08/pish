@@ -17,7 +17,7 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
     <div>
       <Navbar />
       <main className="px-5">
-        <h2 className="pt-32 max-w-2xl mx-auto font-serif font-black text-xl sm:text-2xl md:text-3xl text-center">
+        <h2 className="pt-12 max-w-2xl mx-auto font-serif font-black text-xl sm:text-2xl md:text-3xl text-center">
           {article.title[0].text}
         </h2>
         <div className="flex items-center justify-center space-x-2 text-gray-600 mt-3 text-sm sm:text-base">
@@ -30,7 +30,7 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
           </p>
         </div>
         <div className="prose lg:prose-xl mx-auto mt-10">
-          <div data-tip={article.image.alt}>
+          <div data-tip={article.image.alt} data-for="image-tooltip">
             <img
               src={article.image.url}
               alt={article.image.alt}
