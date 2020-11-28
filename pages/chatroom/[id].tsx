@@ -58,7 +58,7 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
   const sendMessage = async () => {
     const { uid, photoURL } = user;
     const { serverTimestamp } = firebase.firestore.FieldValue;
-    let valueToSend = formValue;
+    let valueToSend: any = formValue.split(' ');
     setFormValue('');
 
     const emojis = {
@@ -72,11 +72,11 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
       '~@~': '💩',
     };
 
-    for (const key in emojis) {
-      valueToSend = valueToSend.replace(key, emojis[key]);
-    }
+    valueToSend = valueToSend
+      .map((word: string) => (word in emojis ? emojis[word] : word))
+      .join(' ');
 
-    if (formValue.trim()) {
+    if (valueToSend.trim()) {
       await messagesRef.add({
         uid,
         photoURL,
