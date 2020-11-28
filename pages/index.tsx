@@ -9,7 +9,10 @@ import { Navbar } from '../components/Navbar';
 import { Card } from '../components/Card';
 
 const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
-  const [play, { stop, isPlaying }] = useSound('/assets/pronounce_pish.mp3');
+  const [play, { stop, isPlaying }] = useSound(
+    // '/assets/pronounce_pish.mp3'
+    'https://ssl.gstatic.com/dictionary/static/pronunciation/2020-02-14/audio/go/gobble_en_us_1.mp3'
+  );
 
   useEffect(() => console.log(articles), []);
 
