@@ -2,21 +2,28 @@ import Filter from 'bad-words';
 import firebase from 'firebase';
 import { NextPage } from 'next';
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
 import ReactTooltip from 'react-tooltip';
 import { Waypoint } from 'react-waypoint';
+import { v4 } from 'uuid';
 import { Button } from '../../components/Button';
 import { SettingsModal } from '../../components/Modal';
 import { Navbar } from '../../components/Navbar';
+import { UploadedImage } from '../../components/UploadedImage';
+import { emojis } from '../../utils/emojis';
 
 const Chatroom: NextPage<{ id: string }> = ({ id }) => {
   const auth = firebase.auth();
+  const storage = firebase.storage();
   const firestore = firebase.firestore();
+  const [messages, setMessages] = useState([]);
   const [formValue, setFormValue] = useState('');
   const [showCover, setShowCover] = useState(true);
-  const [messages, setMessages] = useState([]);
+  const [emojiOpen, setEmojiOpen] = useState(false);
+  const closeEmojiButton = useRef<HTMLButtonElement>(null);
   const stake = useRef<HTMLDivElement>(null);
 
   const messagesRef = firestore.collection('messages');
@@ -26,6 +33,7 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
 
   useEffect(() => {
     const filter = new Filter();
+    filter.removeWords(...['wang', 'god', 'damn']);
     const subscription = messagesRef
       .where('chatId', '==', id)
       .orderBy('createdAt')
@@ -42,8 +50,16 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
           }) as any
         );
         querySnapshot.docChanges().forEach((change) => {
+          console.log(change.type);
           if (change.type === 'added') {
-            stake.current!.scrollIntoView({ behavior: 'smooth' });
+            if (change.doc.data().imageURL) {
+              setTimeout(
+                () => stake.current!.scrollIntoView({ behavior: 'smooth' }),
+                750
+              );
+            } else {
+              stake.current!.scrollIntoView({ behavior: 'smooth' });
+            }
           }
         });
       });
@@ -55,33 +71,35 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
 
   const [user] = useAuthState(auth);
 
-  const sendMessage = async () => {
+  const formatDate = (date: string) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(date).toLocaleDateString('en', options);
+  };
+
+  const sendMessage = async (
+    value: string = formValue,
+    isImage: boolean = false
+  ) => {
     const { uid, photoURL } = user;
     const { serverTimestamp } = firebase.firestore.FieldValue;
-    let valueToSend: any = formValue.split(' ');
-    setFormValue('');
+    if (value === formValue) {
+      setFormValue('');
+    }
 
-    const emojis = {
-      xD: '😆',
-      ':)': '🙂',
-      ':(': '😟',
-      ":'(": '😢',
-      '<3': '💖',
-      ':D': '😄',
-      ':3': '😸',
-      '~@~': '💩',
-    };
+    // let valueToSend: any = value.split(' ');
+    // if (!isImage) {
+    //   valueToSend = valueToSend
+    //     .map((word: string) => (word in emojis ? emojis[word] : word))
+    //     .join(' ');
+    // }
 
-    valueToSend = valueToSend
-      .map((word: string) => (word in emojis ? emojis[word] : word))
-      .join(' ');
-
-    if (valueToSend.trim()) {
+    if ((!isImage && value.trim()) || (isImage && value)) {
       await messagesRef.add({
         uid,
         photoURL,
         chatId: id,
-        text: valueToSend,
+        text: isImage ? null : value,
+        imageURL: isImage ? value : null,
         createdAt: serverTimestamp(),
       });
     }
@@ -91,12 +109,48 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
   const isModerator = () => chat?.moderators.includes(user.uid);
   const isMe = (message: any) => message.uid === user.uid;
 
+  const uploadFromBlobAsync = async ({ blobUrl, name }: any) => {
+    if (!blobUrl || !name) {
+      return null;
+    }
+
+    try {
+      const blob = await fetch(blobUrl).then((r) => r.blob());
+      const snapshot = await storage.ref('images').child(name).put(blob);
+      return await snapshot.ref.getDownloadURL();
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const onDrop = useCallback(async ([file]) => {
+    const name = v4();
+    try {
+      const url = await uploadFromBlobAsync({
+        blobUrl: URL.createObjectURL(file),
+        name: `${file.name}_${name}`,
+      });
+      sendMessage(url, true);
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    maxFiles: 1,
+    accept: 'image/*',
+  });
+
   return (
-    <div className="text-gray-50 bg-gray-800 min-h-screen">
+    <div
+      className="text-gray-50 bg-gray-800 min-h-screen"
+      suppressHydrationWarning={true}
+    >
       <div className="sticky top-0 w-full">
         <Navbar />
       </div>
-      <div className="sticky top-0 py-6 px-5 bg-gray-900">
+      <div className="sticky z-50 top-0 py-6 px-5 bg-gray-900">
         <div className="relative flex items-center container mx-auto w-full justify-center">
           <Link href="/discuss">
             <a className="flex items-center text-gray-300 hover:text-gray-400 transition duration-300 mr-auto">
@@ -121,9 +175,9 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
           <div>
             {isBanned() ? (
               <p className="text-red-600 font-bold">You have been banned</p>
-            ) : (
+            ) : isModerator() ? (
               <SettingsModal chat={chat} id={id} />
-            )}
+            ) : null}
           </div>
         </div>
       </div>
@@ -138,27 +192,54 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
               }`}
               key={message.id}
             >
-              <img
-                src={message.photoURL}
-                alt="Profile Picture"
-                className={`w-10 h-10 object-cover rounded-full ${
-                  isMe(message) ? 'ml-4' : 'mr-4'
-                }`}
-              />
-              <p
-                className={`px-5 max-w-md rounded-3xl ${
-                  message.text.length > 58 ? 'py-3.5' : 'py-2'
-                } ${
-                  isMe(message) ? 'bg-lightBlue-600' : 'bg-red-600'
-                } text-white`}
+              {message.photoURL ? (
+                <img
+                  src={message.photoURL}
+                  alt="Profile Picture"
+                  className={`w-10 h-10 object-cover rounded-full ${
+                    isMe(message) ? 'ml-4' : 'mr-4'
+                  }`}
+                />
+              ) : (
+                <div
+                  className={`w-10 h-10 rounded-full ${
+                    isMe(message) ? 'ml-4 bg-lightBlue-600' : 'mr-4 bg-red-600'
+                  }`}
+                />
+              )}
+              <div
+                data-for={`timestamp-${message.id}`}
+                data-tip={formatDate(
+                  message.createdAt?.toDate().toDateString()
+                )}
               >
-                {message.text}
-              </p>
+                {message.imageURL ? (
+                  <UploadedImage message={message} />
+                ) : (
+                  <p
+                    className={`px-5 max-w-md rounded-3xl ${
+                      message.text.length > 58 ? 'py-3.5' : 'py-2'
+                    } ${
+                      isMe(message) ? 'bg-lightBlue-600' : 'bg-red-600'
+                    } text-white`}
+                  >
+                    {message.text}
+                  </p>
+                )}
+              </div>
+              <ReactTooltip
+                place="bottom"
+                type="dark"
+                effect="solid"
+                id={`timestamp-${message.id}`}
+                className="bg-gray-900 bg-opacity-90 text-white"
+              />
               {!isMe(message) && isModerator() ? (
                 <div className="mr-2 ml-4">
                   <button
                     className="mt-2 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-full"
                     data-tip="Ban user"
+                    data-for="ban-tooltip"
                     onClick={() => {
                       chatRef.update({
                         banned: firebase.firestore.FieldValue.arrayUnion(
@@ -180,14 +261,21 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
                       />
                     </svg>
                   </button>
-                  <ReactTooltip place="bottom" type="dark" effect="solid" />
+                  <ReactTooltip
+                    place="bottom"
+                    type="dark"
+                    effect="solid"
+                    id="ban-tooltip"
+                    className="bg-gray-900 bg-opacity-90 text-white"
+                  />
                 </div>
               ) : null}
               {!isMe(message) && isModerator() ? (
-                <div>
+                <>
                   <button
                     className="mt-2 focus:outline-none focus:ring-2 focus:ring-red-500 rounded"
                     data-tip="Delete message"
+                    data-for="delete-tooltip"
                     onClick={async () => {
                       await messagesRef.doc(message.id).delete();
                     }}
@@ -205,8 +293,13 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
                       />
                     </svg>
                   </button>
-                  <ReactTooltip place="bottom" type="dark" effect="solid" />
-                </div>
+                  <ReactTooltip
+                    place="bottom"
+                    type="dark"
+                    effect="solid"
+                    id="delete-tooltip"
+                  />
+                </>
               ) : null}
             </div>
           ))}
@@ -226,46 +319,148 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
         />
         <div className="fixed bottom-0 left-0 mb-8 ml-auto w-full">
           <div
-            className={`${showCover ? 'block' : 'hidden'} h-48`}
+            className={`${showCover ? 'block' : 'hidden'} h-36`}
             style={{
               position: 'relative',
               zIndex: -1,
-              backgroundImage:
-                'linear-gradient(to top, #27272a, #27272a33, #27272a00)',
+              backgroundImage: 'linear-gradient(to top, #27272a, #27272a00)',
             }}
           />
-          <form
-            className="flex items-start space-x-3 max-w-4xl mx-auto px-5"
-            onSubmit={(e) => {
-              e.preventDefault();
-              sendMessage();
-            }}
-          >
-            <input
-              value={formValue}
-              onChange={({ target: { value } }) => setFormValue(value)}
-              disabled={isBanned()}
-              name="message"
-              id="message"
-              placeholder="Message"
-              className={`w-full text-gray-200 bg-gray-700 px-5 pt-3 pb-8 rounded border border-gray-600 focus:outline-none focus:bg-gray-500 focus:bg-opacity-25 resize-none shadow-lg ${
-                isBanned() ? 'cursor-not-allowed' : ''
-              }`}
-            />
-            <Button disabled={isBanned()} sans>
-              <div className="flex items-center">
-                Send
+          <div className="flex items-start max-w-4xl mx-auto px-5 space-x-4">
+            <div className="relative flex flex-col-reverse items-center">
+              <div className="absolute bottom-0 left-0 transform -translate-y-10">
+                {emojiOpen ? (
+                  <div className="relative rounded-lg bg-gray-700 shadow-2xl w-72 h-80 overflow-y-auto text-gray-200">
+                    <div className="sticky top-0 flex items-center justify-between bg-gray-700 py-3 px-5 border-b border-gray-600">
+                      <h3 className="font-bold text-lg text-gray-50">
+                        Emoji Shortcuts
+                      </h3>
+                      <button
+                        className="focus:outline-none focus:ring-2 focus:ring-red-600 rounded-sm p-0.5"
+                        aria-label="Close"
+                        ref={closeEmojiButton}
+                        onClick={() => setEmojiOpen(false)}
+                      >
+                        <svg
+                          className="w-4 h-4 text-gray-50"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <ul className="pb-4 px-5 pt-2">
+                      {Object.keys(emojis).map((key) => (
+                        <li className="mb-1" key={v4()}>
+                          <button
+                            className="flex justify-between items-center text-xl w-full"
+                            onClick={() => {
+                              setEmojiOpen(false);
+                              setFormValue(formValue + emojis[key]);
+                            }}
+                          >
+                            <span className="font-bold">{key}</span>
+                            <span>{emojis[key]}</span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+              </div>
+              <button
+                className="rounded focus:ring-2 focus:ring-red-600 focus:outline-none p-0.5 mb-1"
+                onClick={() => {
+                  if (!emojiOpen) {
+                    closeEmojiButton.current?.focus();
+                  }
+                  setEmojiOpen(!emojiOpen);
+                }}
+                aria-label="Emojis"
+              >
                 <svg
-                  className="w-4 h-4 ml-2"
+                  className="w-6 h-6 text-gray-300"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-.464 5.535a1 1 0 10-1.415-1.414 3 3 0 01-4.242 0 1 1 0 00-1.415 1.414 5 5 0 007.072 0z"
+                    clipRule="evenodd"
+                  />
                 </svg>
+              </button>
+              <div {...getRootProps()}>
+                <input {...getInputProps()} />
+                <button
+                  className="rounded focus:ring-2 focus:ring-red-600 focus:outline-none p-0.5 mb-1.5"
+                  aria-label="Upload Files"
+                >
+                  <svg
+                    className="w-6 h-6 text-gray-300"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      clipRule="evenodd"
+                      d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2h-5L9 4H4zm7 5a1 1 0 00-2 0v1H8a1 1 0 000 2h1v1a1 1 0 002 0v-1h1a1 1 0 000-2h-1V9z"
+                      fillRule="evenodd"
+                    />
+                  </svg>
+                </button>
               </div>
-            </Button>
-          </form>
+            </div>
+            <form
+              className="flex items-start space-x-3 w-full"
+              onSubmit={(e) => {
+                e.preventDefault();
+                sendMessage();
+              }}
+            >
+              <input
+                value={formValue}
+                onChange={({ target: { value } }) => {
+                  setFormValue(value);
+                  let newValue = value.split(' ');
+                  newValue.forEach((word, index) => {
+                    if (Object.keys(emojis).includes(word)) {
+                      newValue[index] = emojis[word];
+                    }
+                  });
+                  setFormValue(newValue.join(' '));
+                }}
+                disabled={isBanned()}
+                name="message"
+                id="message"
+                autoComplete="off"
+                placeholder="Message"
+                className={`w-full text-gray-200 bg-gray-700 px-5 pt-3 pb-8 rounded border border-gray-600 focus:outline-none focus:bg-gray-500 focus:bg-opacity-25 resize-none shadow-lg ${
+                  isBanned() ? 'cursor-not-allowed' : ''
+                }`}
+              />
+              <Button disabled={isBanned()} sans>
+                <div className="flex items-center">
+                  Send
+                  <svg
+                    className="w-4 h-4 ml-2"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                  </svg>
+                </div>
+              </Button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

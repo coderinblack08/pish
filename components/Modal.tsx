@@ -2,9 +2,11 @@ import firebase from 'firebase';
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 
-Modal.defaultStyles.overlay!.backgroundColor = '#00000088';
-
 const customStyles = {
+  overlay: {
+    zIndex: '9999',
+    backgroundColor: '#00000088',
+  },
   content: {
     top: '50%',
     left: '50%',
@@ -46,7 +48,7 @@ export const SettingsModal: React.FC<{ chat: any; id: string }> = ({
       </button>
       <Modal
         isOpen={modalIsOpen}
-        style={customStyles}
+        style={customStyles as any}
         onRequestClose={() => setIsOpen(false)}
         contentLabel="Settings Modal"
       >
@@ -68,6 +70,35 @@ export const SettingsModal: React.FC<{ chat: any; id: string }> = ({
           </button>
         </div>
         <div className="mt-2">
+          <form>
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold mb-1">Moderators</h3>
+              <button>
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
+                </svg>
+              </button>
+            </div>
+            <input
+              type="text"
+              placeholder="Email or Username"
+              className="w-full px-3 py-2 focus:outline-none focus:border-none focus:border-white focus:ring-2 focus:ring-red-600 rounded my-2 shadow-sm border cursor-not-allowed"
+              disabled
+            />
+          </form>
+          <div className="mb-4">
+            {chat?.moderators?.map((uid: string) => (
+              <div className="text-gray-600 w-full text-left" key={uid}>
+                {uid}
+              </div>
+            ))}
+          </div>
+
           <h3 className="font-bold mb-1">Banned</h3>
           {chat?.banned?.map((uid: string) => (
             <button

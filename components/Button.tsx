@@ -2,10 +2,18 @@ import Link from 'next/link';
 import React, { ButtonHTMLAttributes } from 'react';
 
 type ButtonProps = {
+  className?: string;
   sans?: boolean;
   href?: string;
   size?: 'sm' | 'md' | 'lg';
-  colorTheme?: 'red' | 'blue' | 'lightBlue' | 'orange' | 'purple' | 'gray';
+  colorTheme?:
+    | 'red'
+    | 'blue'
+    | 'lightBlue'
+    | 'orange'
+    | 'purple'
+    | 'gray'
+    | 'black';
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 export const ButtonStyles = {
@@ -20,6 +28,7 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   href,
   disabled,
+  className,
   size = 'sm',
   ...props
 }) => {
@@ -33,7 +42,7 @@ export const Button: React.FC<ButtonProps> = ({
         disabled
           ? `cursor-not-allowed bg-${colorTheme}-800 text-${colorTheme}-200`
           : `focus:border focus:border-${colorTheme}-200 bg-${colorTheme}-600 focus:bg-${colorTheme}-700 text-${colorTheme}-50`
-      }`}
+      } ${className}`}
       disabled={disabled}
       {...props}
     >

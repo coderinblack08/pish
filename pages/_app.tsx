@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+import 'firebase/storage';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import React from 'react';
@@ -46,7 +47,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta httpEquiv="X-UA-Compatible" content="edge" />
         <meta
           name="description"
-          content="news, opinion, articles, information"
+          content="Real news, opinion pieces, articles, and knowledge"
         />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="preconnect" href="https://fonts.gstatic.com" />

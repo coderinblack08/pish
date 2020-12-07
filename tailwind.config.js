@@ -13,8 +13,15 @@ module.exports = {
   },
   darkMode: 'class', // 'media' || 'class'
   theme: {
+    colors: {
+      gray: colors.gray,
+      red: colors.red,
+      blue: colors.blue,
+      lightBlue: colors.lightBlue,
+      black: colors.black,
+      white: colors.white,
+    },
     extend: {
-      colors,
       fontFamily: {
         serif: ['Lora', 'serif'],
         sans: ['Lato', 'sans-serif'],

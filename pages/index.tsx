@@ -1,12 +1,14 @@
+import { GetStaticProps } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
+import Prismic from 'prismic-javascript';
+import ApiSearchResponse from 'prismic-javascript/types/ApiSearchResponse';
 import React, { useEffect } from 'react';
 import useSound from 'use-sound';
-import { GetStaticProps } from 'next';
 import { Button } from '../components/Button';
-import { client } from '../utils/prismic-connection';
-import ApiSearchResponse from 'prismic-javascript/types/ApiSearchResponse';
-import Prismic from 'prismic-javascript';
-import { Navbar } from '../components/Navbar';
 import { Card } from '../components/Card';
+import { Navbar } from '../components/Navbar';
+import { client } from '../utils/prismic-connection';
 
 const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
   const [play, { stop, isPlaying }] = useSound('/assets/pronounce_pish.mp3');
@@ -101,9 +103,10 @@ const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
             </div>
           </div>
           <div className="hidden md:block relative col-span-12 lg:col-span-5">
-            <img
+            <Image
               src="/assets/circular-city.jpg"
               alt="Photo by sergio souza on Unsplash"
+              layout="fill"
               className="clip-image w-screen h-72 sm:h-96 lg:w-auto lg:max-h-4xl lg:h-screen inline-block object-cover"
             />
             <div className="absolute bottom-0 right-0 mb-4 mr-4 px-4 py-1 rounded shadow-xl bg-white bg-opacity-50 text-gray-800 font-medium">
@@ -116,7 +119,7 @@ const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
         className="grid grid-cols-12 gap-6 bg-white max-w-3xl lg:max-w-6xl mx-auto py-5 md:py-16 lg:py-28 px-5 sm:px-8"
         id="main"
       >
-        <div className="flex items-center mb-1 transform hover:-translate-y-1 transition ease duration-200 col-span-12 bg-red-50 text-red-500 font-medium px-4 py-3 rounded-md">
+        <div className="flex items-center mb-1 transform hover:-translate-y-1 transition ease duration- col-span-12 bg-red-50 text-red-500 font-medium px-4 py-3 rounded-md">
           <svg
             className="w-5 h-5 mr-2 text-red-600"
             fill="none"
@@ -133,28 +136,27 @@ const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
           </svg>
           <span className="text-red-600 font-semibold mr-1">Note:</span> We have
           just launched and some links and pages are still under development.
-          <a
-            href="#"
-            className="flex items-center ml-auto text-red-600 font-semibold"
-          >
-            Details
-            <svg
-              className="w-3.5 h-3.5 ml-1.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M14 5l7 7m0 0l-7 7m7-7H3"
-              />
-            </svg>
-          </a>
+          <Link href="/development-note">
+            <a className="flex items-center ml-auto text-red-600 font-semibold">
+              Details
+              <svg
+                className="w-3.5 h-3.5 ml-1.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
+              </svg>
+            </a>
+          </Link>
         </div>
-        {articles.results.slice(0, 4).map((result, index) => (
+        {articles.results.map((result, index) => (
           <Card key={result.id} index={index} result={result} />
         ))}
       </main>
@@ -163,9 +165,14 @@ const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
 };
 
 export const getStaticProps: GetStaticProps = async () => {
+  const featured = await client.query(
+    Prismic.Predicates.at('document.type', 'featured')
+  );
+
+  const ids = Object.values(featured.results[0].data).map((r: any) => r.id);
+
   const articles = await client.query(
-    Prismic.Predicates.at('document.type', 'article'),
-    { orderings: '[my.article.date desc]' }
+    Prismic.Predicates.in('document.id', ids)
   );
 
   return {
