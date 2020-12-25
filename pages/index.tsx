@@ -1,5 +1,4 @@
 import { GetStaticProps } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import Prismic from 'prismic-javascript';
 import ApiSearchResponse from 'prismic-javascript/types/ApiSearchResponse';
@@ -103,10 +102,9 @@ const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
             </div>
           </div>
           <div className="hidden md:block relative col-span-12 lg:col-span-5">
-            <Image
+            <img
               src="/assets/circular-city.jpg"
               alt="Photo by sergio souza on Unsplash"
-              layout="fill"
               className="clip-image w-screen h-72 sm:h-96 lg:w-auto lg:max-h-4xl lg:h-screen inline-block object-cover"
             />
             <div className="absolute bottom-0 right-0 mb-4 mr-4 px-4 py-1 rounded shadow-xl bg-white bg-opacity-50 text-gray-800 font-medium">

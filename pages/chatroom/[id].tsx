@@ -362,7 +362,7 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
                             className="flex justify-between items-center text-xl w-full"
                             onClick={() => {
                               setEmojiOpen(false);
-                              setFormValue(formValue + emojis[key]);
+                              setFormValue(`${formValue}${emojis[key]} `);
                             }}
                           >
                             <span className="font-bold">{key}</span>
@@ -432,7 +432,7 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
                   let newValue = value.split(' ');
                   newValue.forEach((word, index) => {
                     if (Object.keys(emojis).includes(word)) {
-                      newValue[index] = emojis[word];
+                      newValue[index] = `${emojis[word]} `;
                     }
                   });
                   setFormValue(newValue.join(' '));

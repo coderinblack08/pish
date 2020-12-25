@@ -45,7 +45,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   console.log(params);
 
   const articles = await client.query(
-    Prismic.Predicates.at('document.type', 'article')
+    Prismic.Predicates.at('document.type', 'article'),
+    { orderings: '[my.article.date desc]' }
     // Prismic.Predicates.fulltext('document', 'Trump')
     // { pageSize: 20 }
   );

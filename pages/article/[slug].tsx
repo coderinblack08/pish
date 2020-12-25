@@ -96,7 +96,7 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
             <TwitterShareButton
               url={process.browser ? window.location.href : ''}
               title="Check it out:"
-              hashtags={['pishnews', ...tags.map((t) => t.replace(/\s/, ''))]}
+              hashtags={['pishnews', ...tags.map((t) => t.replace(/\s/g, ''))]}
             >
               <button className="inline-flex items-center justify-center w-11 h-11 bg-lightBlue-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-lightBlue-300 hover:bg-lightBlue-400 transition ease duration-200">
                 <svg
