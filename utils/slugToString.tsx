@@ -1,5 +1,3 @@
-import { PREVIEW_COOKIE } from 'prismic-javascript/types/ResolvedApi';
-
 export const slugToString = (str: string): string =>
   str
     .split('-')
