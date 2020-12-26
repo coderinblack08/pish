@@ -1,6 +1,6 @@
-import React from 'react';
 import Link from 'next/link';
-import { slugToString } from '../utils/slugToString';
+import React from 'react';
+import { slugToAuthor } from '../utils/slugToString';
 
 interface CardProps {
   index?: number;
@@ -25,7 +25,7 @@ export const Card: React.FC<CardProps> = ({ index = 0, result, type }) => {
                 {result.data.title[0].text}
               </h3>
               <p className="text-red-500 font-medium mt-2 text-sm">
-                By {slugToString(result.data.author.slug)}
+                By {slugToAuthor(result.data.author.slug)}
                 <span className="text-gray-400 font-normal ml-2">
                   &middot;&nbsp; {result.data.read_time} min
                   {result.data.read_time > 1 ? 's' : ''} read
@@ -66,7 +66,7 @@ export const Card: React.FC<CardProps> = ({ index = 0, result, type }) => {
               : 'text-sm sm:text-base mt-2 sm:mt-3'
           }`}
         >
-          By {slugToString(result.data.author.slug)}
+          By {slugToAuthor(result.data.author.slug)}
           <span className="text-gray-400 font-normal ml-2">
             &middot;&nbsp; {result.data.read_time} min
             {result.data.read_time > 1 ? 's' : ''} read
