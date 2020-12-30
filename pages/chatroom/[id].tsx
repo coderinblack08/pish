@@ -33,7 +33,7 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
 
   useEffect(() => {
     const filter = new Filter();
-    filter.removeWords(...['wang', 'god', 'damn']);
+    filter.removeWords(...['wang', 'god', 'damn', 'poop']);
     const subscription = messagesRef
       .where('chatId', '==', id)
       .orderBy('createdAt')
@@ -73,7 +73,7 @@ const Chatroom: NextPage<{ id: string }> = ({ id }) => {
 
   const formatDate = (date: string) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(date).toLocaleDateString('en', options);
+    return new Date(date).toLocaleDateString('en', options as any);
   };
 
   const sendMessage = async (
