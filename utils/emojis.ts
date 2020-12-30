@@ -26,4 +26,5 @@ export const emojis: Record<string, string> = {
   '/unicorn': '🦄 🌈',
   '/social-distance': '🧍↔️🧍',
   '/christmas': '🎅 🎉 🎁 🔔 🎄',
+  '/happy-new-years': '🍾 🎉 🎆 🎊 🥳 🕛',
 };
