@@ -25,7 +25,6 @@ export const slugToAuthor = (str: string): string => {
     if (previous) {
       result.push(previous);
     }
-    console.log(newStr, result);
     return result.join(' & ');
   }
   return slugToString(str);

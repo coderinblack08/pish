@@ -30,7 +30,7 @@ const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
             </div>
             <div className="space-y-3 sm:space-y-5">
               <div className="flex items-center font-serif whitespace-nowrap text-black dark:text-white">
-                <h1 className="font-bold text-3xl sm:text-5xl">🎄 Pish News</h1>
+                <h1 className="font-bold text-3xl sm:text-5xl">🇺🇸 Pish News</h1>
                 <h2 className="font-semibold text-base sm:text-xl md:text-2xl ml-3 text-coolGray-700 dark:text-coolGray-300 -mb-1">
                   /piSH/
                 </h2>

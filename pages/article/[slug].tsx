@@ -9,11 +9,12 @@ import {
 } from 'react-share';
 import ReactTooltip from 'react-tooltip';
 import { Navbar } from '../../components/Navbar';
-import { Seperator } from '../../components/Seperator';
+import { Separator } from '../../components/Separator';
 import { client } from '../../utils/prismic-connection';
+import { NewsArticleJsonLd, NextSeo } from 'next-seo';
 
 const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
-  slug: _,
+  slug,
   article,
   tags,
 }) => {
@@ -21,6 +22,42 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
 
   return (
     <div>
+      <NextSeo
+        title={article.title[0].text}
+        canonical={`https://pish.now.sh/article/${slug}`}
+        openGraph={{
+          type: 'article',
+          article: {
+            publishedTime: article.date,
+          },
+          url: `https://pish.now.sh/article/${slug}`,
+          title: article.title[0].text,
+          images: [
+            {
+              url: article.image.url,
+              alt: article.image.alt,
+            },
+          ],
+        }}
+      />
+      <NewsArticleJsonLd
+        url={`https://pish.now.sh/article/${slug}`}
+        title={article.title[0].text}
+        images={[article.image.url]}
+        section="news"
+        keywords={tags.join(',')}
+        datePublished={article.date}
+        authorName={article.author.name}
+        publisherName="Pish News"
+        publisherLogo={
+          process.env.NODE_ENV === 'production'
+            ? 'https://pish.now.sh/assets/pish.jpg'
+            : 'http://localhost:3001/assets/pish.jpg'
+        }
+        description={article.title[0].text}
+        body={article.body}
+        dateCreated={article.date}
+      />
       <Navbar />
       <main className="px-5">
         <h2 className="pt-12 max-w-2xl mx-auto font-serif font-black text-xl sm:text-2xl md:text-3xl text-center">
@@ -28,9 +65,9 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
         </h2>
         <div className="flex items-center justify-center space-x-2 text-gray-600 mt-3 text-sm sm:text-base">
           <p className="text-red-600">By {article.author.name}</p>
-          <Seperator />
+          <Separator />
           <p>{article.date}</p>
-          <Seperator />
+          <Separator />
           <p>
             {article.read_time} minute{article.read_time > 1 ? 's' : ''} read
           </p>
