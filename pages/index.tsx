@@ -30,7 +30,7 @@ const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
             </div>
             <div className="space-y-3 sm:space-y-5">
               <a href="https://radishnews.net">
-                <div className="inline-block py-1 px-3 rounded bg-green-800 text-white font-lato font-bold text-sm mb-6">
+                <div className="inline-block py-1 px-3 rounded bg-green-800 text-white font-lato font-bold text-sm mb-4 sm:mb-6">
                   Read the Radish
                 </div>
               </a>

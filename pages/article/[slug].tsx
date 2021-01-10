@@ -75,6 +75,7 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
         <div className="flex justify-center pt-5 mb-12">
           <div className="flex items-center space-x-2">
             <FacebookShareButton
+              tabIndex={-1}
               url={process.browser ? window.location.href : ''}
               hashtag="pishnews"
               quote="Check it out:"
@@ -95,6 +96,7 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
               </button>
             </FacebookShareButton>
             <TwitterShareButton
+              tabIndex={-1}
               url={process.browser ? window.location.href : ''}
               title={article.title[0].text}
               // hashtags={['pishnews', ...tags.map((t) => t.replace(/\s/g, ''))]}
@@ -115,6 +117,7 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
               </button>
             </TwitterShareButton>
             <EmailShareButton
+              tabIndex={-1}
               subject="Pish News Article"
               body="Check it out"
               url={process.browser ? window.location.href : ''}
