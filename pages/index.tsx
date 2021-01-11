@@ -124,7 +124,7 @@ const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
       >
         <div className="flex items-center mb-1 transform hover:-translate-y-1 transition ease duration- col-span-12 bg-red-50 text-red-500 font-medium px-4 py-3 rounded-md">
           <svg
-            className="w-5 h-5 mr-2 text-red-600"
+            className="hidden sm:block w-5 h-5 mr-2 text-red-600"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -137,8 +137,11 @@ const Index: React.FC<{ articles: ApiSearchResponse }> = ({ articles }) => {
               d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <span className="text-red-600 font-semibold mr-1">Note:</span> We have
-          just launched and some links and pages are still under development.
+          <span className="text-red-600 font-semibold mr-1">Note:</span>{' '}
+          <p className="truncate mr-5">
+            We have just launched and some links and pages are still under
+            development.
+          </p>
           <Link href="/development-note">
             <a className="flex items-center ml-auto text-red-600 font-semibold">
               Details

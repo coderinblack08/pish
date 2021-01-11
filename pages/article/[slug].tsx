@@ -2,6 +2,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Prismic from 'prismic-javascript';
 import { RichText } from 'prismic-reactjs';
 import React, { useEffect } from 'react';
+import Link from 'next/link';
 import {
   EmailShareButton,
   FacebookShareButton,
@@ -159,7 +160,7 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
           </p>
           <div className="flex items-center pb-6">
             <svg
-              className="w-4 h-4 mr-1"
+              className="w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -173,7 +174,15 @@ const Article: React.FC<{ slug: string; article: any; tags: string[] }> = ({
               />
             </svg>
             <span className="text-gray-800 text-lg">
-              Tags: {tags.join(', ')}
+              Tags:{' '}
+              {tags.map((tag, i) => (
+                <span key={i}>
+                  {i ? ', ' : null}
+                  <Link href="/tag/[tag]" as={`/tag/${tag}`}>
+                    <a>{tag}</a>
+                  </Link>
+                </span>
+              ))}
             </span>
           </div>
           <div className="pb-20" />
