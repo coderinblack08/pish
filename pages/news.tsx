@@ -9,7 +9,7 @@ const News: React.FC = ({}) => {
         <iframe
           width="620"
           height="345"
-          src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+          src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0;&autoplay=1&mute=0&loop=1"
           className="mx-auto"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         ></iframe>
