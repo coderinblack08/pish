@@ -1,11 +1,10 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
+import fetch from 'node-fetch';
 import Prismic from 'prismic-javascript';
 import React from 'react';
+import { Card } from '../../components/Card';
 import { Navbar } from '../../components/Navbar';
 import { client } from '../../utils/prismic-connection';
-import fetch from 'node-fetch';
-import { Card } from '../../components/Card';
-import { v4 } from 'uuid';
 
 const Tags: React.FC<{ tag: string; articles: any }> = ({ tag, articles }) => {
   return (
@@ -23,7 +22,7 @@ const Tags: React.FC<{ tag: string; articles: any }> = ({ tag, articles }) => {
               <Card key={data.id} type="display" result={data} />
             </div>
           ))}
-          <li
+          {/* <li
             className="mb-10 mr-3 max-w-sm md:max-w-xs flex items-center pt-16 w-full flex-col"
             style={{ minHeight: '20rem' }}
             key={v4()}
@@ -35,7 +34,7 @@ const Tags: React.FC<{ tag: string; articles: any }> = ({ tag, articles }) => {
               Contribute your articles!
             </a>
             <p className="text-red-600">Restrictions may apply</p>
-          </li>
+          </li> */}
         </ul>
       </div>
     </div>
